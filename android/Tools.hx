@@ -1,77 +1,90 @@
-package android;
+package android.os;
 
 #if (!android && !native && macro)
 #error 'extension-androidtools is not supported on your current platform'
 #end
+
 import lime.system.JNI;
 
 /**
+ * @see https://developer.android.com/reference/android/os/Environment
+ * 
  * @author Mihai Alexandru (M.A. Jigsaw)
  */
 class Tools
 {
+	public static final BAD_REMOVAL:String = 'bad_removal';
+	public static final CHECKING:String = 'checking';
+	public static final MOUNTED:String = 'mounted';
+	public static final MOUNTED_READ_ONLY:String = 'mounted_ro';
+	public static final NOFS:String = 'nofs';
+	public static final REMOVED:String = 'removed';
+	public static final SHARED:String = 'shared';
+	public static final UNMOUNTABLE:String = 'unmountable';
+	public static final UNMOUNTED:String = 'unmounted';
+
 	/**
-	 * Launches a app by the `packageName`.
+	 * Return the user data directory.
 	 */
-	public static function launchPackage(packageName:String, requestCode:Int = 1):Void
+	public static function getDataDirectory():String
 	{
-		JNI.createStaticMethod('org/haxe/extension/Tools', 'launchPackage', '(Ljava/lang/String;I)V')(packageName, requestCode);
+		var getDataDirectory_jni:Dynamic = JNI.createStaticMethod('android/os/Environment', 'getDataDirectory', '()Ljava/io/File;');
+		var getAbsolutePath_jni:Dynamic = JNI.createMemberMethod('java/io/File', 'getAbsolutePath', '()Ljava/lang/String;');
+		return getAbsolutePath_jni(getDataDirectory_jni());
 	}
 
 	/**
-	 * Returns `true` If the device have root.
-	 * Returns `false` If the device doesn't have root or there`s a error while the process is runned.
+	 * Return the download/cache content directory.
 	 */
-	public static function isRooted():Bool
+	public static function getDownloadCacheDirectory():String
 	{
-		return JNI.createStaticMethod('org/haxe/extension/Tools', 'isRooted', '()Z')();
+		var getDownloadCacheDirectory_jni:Dynamic = JNI.createStaticMethod('android/os/Environment', 'getDownloadCacheDirectory', '()Ljava/io/File;');
+		var getAbsolutePath_jni:Dynamic = JNI.createMemberMethod('java/io/File', 'getAbsolutePath', '()Ljava/lang/String;');
+		return getAbsolutePath_jni(getDownloadCacheDirectory_jni());
 	}
 
 	/**
-	 * Sets Activity's Title by the `title`.
+	 * Return the primary shared/external storage directory.
 	 */
-	public static function setActivityTitle(title:String):Bool
+	public static function getExternalStorageDirectory():String
 	{
-		return JNI.createStaticMethod('org/haxe/lime/GameActivity', 'setActivityTitle', '(Ljava/lang/String;)Z')(title);
+		var getExternalStorageDirectory_jni:Dynamic = JNI.createStaticMethod('android/os/Environment', 'getExternalStorageDirectory', '()Ljava/io/File;');
+		var getAbsolutePath_jni:Dynamic = JNI.createMemberMethod('java/io/File', 'getAbsolutePath', '()Ljava/lang/String;');
+		return getAbsolutePath_jni(getExternalStorageDirectory_jni());
 	}
 
 	/**
-	 * Minimizes app's window.
+	 * Returns the current state of the primary shared/external storage media.
 	 */
-	public static function minimizeWindow():Void
+	public static function getExternalStorageState():String
 	{
-		JNI.createStaticMethod('org/haxe/lime/GameActivity', 'minimizeWindow', '()V')();
+		return JNI.createStaticMethod('android/os/Environment', 'getExternalStorageState', '()Ljava/lang/String;')();
 	}
 
 	/**
-	 * Returns whether the device is running Android TV.
+	 * Return root of the 'system' partition holding the core Android OS.
+	 * Always present and mounted read-only.
 	 */
-	public static function isAndroidTV():Bool
+	public static function getRootDirectory():String
 	{
-		return JNI.createStaticMethod('org/haxe/lime/GameActivity', 'isAndroidTV', '()Z')();
+		var getDataDirectory_jni:Dynamic = JNI.createStaticMethod('android/os/Environment', 'getRootDirectory', '()Ljava/io/File;');
+		var getAbsolutePath_jni:Dynamic = JNI.createMemberMethod('java/io/File', 'getAbsolutePath', '()Ljava/lang/String;');
+		return getAbsolutePath_jni(getDataDirectory_jni());
 	}
 
 	/**
-	 * Returns whether the device is a Tablet.
+	 * Returns whether the primary shared/external storage media is emulated.
 	 */
-	public static function isTablet():Bool
+	public static function isExternalStorageEmulated():Bool
 	{
-		return JNI.createStaticMethod('org/haxe/lime/GameActivity', 'isTablet', '()Z')();
+		return JNI.createStaticMethod('android/os/Environment', 'isExternalStorageEmulated', '()Z')();
 	}
 
 	/**
-	 * Returns whether the device is a ChromeBook.
+	 * Returns whether the primary shared/external storage media is physically removable.
 	 */
-	public static function isChromeBook():Bool
+	public static function isExternalStorageRemovable():Bool
 	{
-		return JNI.createStaticMethod('org/haxe/lime/GameActivity', 'isChromeBook', '()Z')();
-	}
-
-	/**
-	 * Returns whether the device is running in Dex Mode.
-	 */
-	public static function isDeXMode():Bool
-	{
-		return JNI.createStaticMethod('org/haxe/lime/GameActivity', 'isDeXMode', '()Z')();
+		return JNI.createStaticMethod('android/os/Environment', 'isExternalStorageRemovable', '()Z')();
 	}
 }
